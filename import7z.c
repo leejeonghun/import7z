@@ -18,6 +18,9 @@
 #else
 #define PYC_HEADER_SIZE 12
 #endif
+#ifndef MAX_PATH
+#define MAX_PATH 260
+#endif
 
 struct st_7z_searchorder {
     char suffix[14];
@@ -863,6 +866,16 @@ set_file_error(PyObject *archive, int eof)
     }
 }
 
+static int
+open_7z_archive(CSzFile *p, PyObject *archive)
+{
+#ifdef WIN32
+    return InFile_OpenW(p, PyUnicode_AsUnicode(archive));
+#else
+    return InFile_Open(p, PyUnicode_AsUTF8(archive));
+#endif
+}
+
 /*
    read_directory(archive) -> files dict (new reference)
 
@@ -891,7 +904,7 @@ read_directory(PyObject *archive)
     CFileInStream stream_arc;
     CLookToRead2 stream_look;
 
-    if (InFile_OpenW(&stream_arc.file, PyUnicode_AsUnicode(archive)) != SZ_OK) {
+    if (open_7z_archive(&stream_arc.file, archive) != SZ_OK) {
         _PyErr_FormatFromCause(Import7zError,
             "can't open 7z file: %R", archive);
         return NULL;
@@ -919,8 +932,8 @@ read_directory(PyObject *archive)
     for (uint32_t i = 0; i < db.NumFiles; i++) {
         PyObject *t;
         int err;
-        wchar_t name[MAX_PATH];
-        size_t name_size = SzArEx_GetFileNameUtf16(&db, i, (UInt16*)name);
+        UInt16 name[MAX_PATH];
+        size_t name_size = SzArEx_GetFileNameUtf16(&db, i, name);
         int file_size = (int)SzArEx_GetFileSize(&db, i);
 
         if (SEP != '/') {
@@ -931,7 +944,7 @@ read_directory(PyObject *archive)
             }
         }
 
-        nameobj = PyUnicode_FromUnicode(name, name_size - 1);
+        nameobj = PyUnicode_FromKindAndData(PyUnicode_2BYTE_KIND, name, name_size - 1);
         if (nameobj == NULL) {
             goto error;
         }
@@ -996,7 +1009,7 @@ get_data(PyObject *archive, PyObject *toc_entry)
         return NULL;
     }
 
-    if (InFile_OpenW(&stream_arc.file, PyUnicode_AsUnicode(archive)) != SZ_OK) {
+    if (open_7z_archive(&stream_arc.file, archive) != SZ_OK) {
         _PyErr_FormatFromCause(Import7zError, "can't open 7z file: %R", archive);
         return NULL;
     }
