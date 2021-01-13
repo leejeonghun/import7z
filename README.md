@@ -1,6 +1,7 @@
-[![License](https://img.shields.io/badge/license-Python%20Software%20Foundation-lightgray.svg)](https://opensource.org/licenses/Python-2.0)
+[![PyPI - License](https://img.shields.io/pypi/l/import7z)](https://opensource.org/licenses/Python-2.0)
 [![Build Status](https://travis-ci.com/leejeonghun/import7z.svg?branch=master)](https://travis-ci.com/leejeonghun/import7z)
 [![codecov](https://codecov.io/gh/leejeonghun/import7z/branch/master/graph/badge.svg?token=DBEP9B3EAJ)](https://codecov.io/gh/leejeonghun/import7z)
+[![PyPI version](https://badge.fury.io/py/import7z.svg)](https://badge.fury.io/py/import7z)
 
 # import7z
 
