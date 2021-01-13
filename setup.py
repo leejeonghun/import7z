@@ -38,7 +38,6 @@ setup(name='import7z',
           'Operating System :: MacOS :: MacOS X',
           'Operating System :: Microsoft :: Windows',
           'Operating System :: POSIX',
-          'Programming Language :: Python',
           ],
       test_suite='test',
       platforms=['any'])
